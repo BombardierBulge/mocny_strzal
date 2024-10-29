@@ -30,5 +30,4 @@ Aplikacja oferuje narzędzia filtrujące wyniki koktajli na podstawie:
 
 1. **Klonuj repozytorium**:
    ```bash
-   git clone https://github.com/user/repo.git
-   cd repo
+   git clone https://github.com/BombardierBulge/mocny_strzal.git
