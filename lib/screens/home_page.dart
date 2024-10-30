@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'cocktail_detail_page.dart';
 import 'search_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'classes/cocktails.dart';
+import '../classes/cocktails.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 String formatSearch(String query, String type) {
@@ -119,7 +119,7 @@ class _HomePageState extends State<HomePage> {
       home: Scaffold(
         appBar: AppBar(
           title:
-          const  Text("Koktaile ",style: TextStyle(fontWeight: FontWeight.w500),),
+          const  Text("Cocktails ",style: TextStyle(fontWeight: FontWeight.w500),),
           backgroundColor: Colors.pinkAccent,
           actions: [
             Builder(

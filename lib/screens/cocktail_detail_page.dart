@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'classes/cocktails.dart';
-import 'classes/ingredients.dart';
+import '../classes/cocktails.dart';
+import '../classes/ingredients.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class CocktailDetailPage extends StatefulWidget {
