@@ -18,10 +18,15 @@ class _SearchWidgetState extends State<SearchWidget> {
   String selectedAlcoholOption = "Both";
   TextEditingController searchController = TextEditingController();
   List<String> categories = [];
+  bool firstStart = true;
 
   @override
   void initState() {
     super.initState();
+    if(firstStart){
+    clearPreferences();
+    firstStart=false;
+    }
     fetchCategories();
     loadPreferences();
   }
@@ -50,6 +55,12 @@ class _SearchWidgetState extends State<SearchWidget> {
       searchController.text = nameFilter;
     });
   }
+  Future<void> clearPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('urlFilter', '');
+    await prefs.setString('selectedCategory', 'All');
+    await prefs.setString('selectedAlcoholOption', 'Both');
+  }
 
   Future<void> savePreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -57,13 +68,16 @@ class _SearchWidgetState extends State<SearchWidget> {
     await prefs.setString('selectedCategory', selectedCategory);
     await prefs.setString('selectedAlcoholOption', selectedAlcoholOption);
   }
-
+  void refreshFiltrs(){
+    setState(() {
+      widget.setSearch(nameFilter, "name");
+      widget.setSearch(selectedCategory, "category");
+      widget.setSearch(selectedAlcoholOption, "alcoholic");
+    });
+  }
   @override
   void dispose() {
     searchController.dispose();
-    nameFilter = "";
-    selectedCategory = "All";
-    selectedAlcoholOption = "Both";
     super.dispose();
   }
 
