@@ -13,7 +13,7 @@ class SearchWidget extends StatefulWidget {
 }
 
 class _SearchWidgetState extends State<SearchWidget> {
-  String urlFilter = "";
+  String nameFilter = "";
   String selectedCategory = "All";
   String selectedAlcoholOption = "Both";
   TextEditingController searchController = TextEditingController();
@@ -44,16 +44,16 @@ class _SearchWidgetState extends State<SearchWidget> {
   Future<void> loadPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      urlFilter = prefs.getString('urlFilter') ?? "";
+      nameFilter = prefs.getString('urlFilter') ?? "";
       selectedCategory = prefs.getString('selectedCategory') ?? "All";
       selectedAlcoholOption = prefs.getString('selectedAlcoholOption') ?? "Both";
-      searchController.text = urlFilter;
+      searchController.text = nameFilter;
     });
   }
 
   Future<void> savePreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('urlFilter', urlFilter);
+    await prefs.setString('urlFilter', nameFilter);
     await prefs.setString('selectedCategory', selectedCategory);
     await prefs.setString('selectedAlcoholOption', selectedAlcoholOption);
   }
@@ -61,35 +61,94 @@ class _SearchWidgetState extends State<SearchWidget> {
   @override
   void dispose() {
     searchController.dispose();
+    nameFilter = "";
+    selectedCategory = "All";
+    selectedAlcoholOption = "Both";
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Padding(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-    TextField(
-    controller: searchController,
-    decoration: InputDecoration(labelText: 'Search Cocktails', border: OutlineInputBorder()),
-    onChanged: (value) {
-    setState(() {
-    urlFilter = value;
-    savePreferences();
-    });
-    widget.setSearch(urlFilter, "name");
-    },
-    ),
-    SizedBox(height: 16),
-    Text('Categories:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-    DropdownButton<String>(
-    value: selectedCategory,
-    onChanged: (String? newValue) {
-    setState(() {
-    selectedCategory = newValue!;
-    savePreferences();
-    widget.setSearch(selectedCategory, "category");
-    });
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: searchController,
+              decoration: InputDecoration(labelText: 'Search Cocktails', border: OutlineInputBorder()),
+              onChanged: (value) {
+                setState(() {
+                  nameFilter = value;
+                  savePreferences();
+                });
+                widget.setSearch(nameFilter, "name");
+              },
+            ),
+            SizedBox(height: 16),
+            Text('Categories:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            DropdownButton<String>(
+              value: selectedCategory,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedCategory = newValue!;
+                  savePreferences();
+                  widget.setSearch(selectedCategory, "category");
+                });
+              },
+              items: categories.map<DropdownMenuItem<String>>((String category) {
+                return DropdownMenuItem<String>(
+                  value: category,
+                  child: Text(category),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Alcoholic :',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            RadioListTile<String>(
+              title: const Text('Both'),
+              value: 'Both',
+              groupValue: selectedAlcoholOption,
+              onChanged: (value) {
+                setState(() {
+                  selectedAlcoholOption = value!;
+                  savePreferences();
+                  widget.setSearch(selectedAlcoholOption, "alcoholic");
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Yes'),
+              value: 'true',
+              groupValue: selectedAlcoholOption,
+              onChanged: (value) {
+                setState(() {
+                  selectedAlcoholOption = value!;
+                  savePreferences();
+                  widget.setSearch(selectedAlcoholOption, "alcoholic");
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('No'),
+              value: 'false',
+              groupValue: selectedAlcoholOption,
+              onChanged: (value) {
+                setState(() {
+                  selectedAlcoholOption = value!;
+                  savePreferences();
+                  widget.setSearch(selectedAlcoholOption, "alcoholic");
+                });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
