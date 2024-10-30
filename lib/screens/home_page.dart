@@ -96,7 +96,6 @@ class _HomePageState extends State<HomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       nameFilter = prefs.getString('urlFilter') ?? "";
-      print(nameFilter);
       categoryFilter = prefs.getString('selectedCategory') ?? "All";
       alcoholicFilter = prefs.getString('selectedAlcoholOption') ?? "Both";
     });
