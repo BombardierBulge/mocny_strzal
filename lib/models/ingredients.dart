@@ -18,7 +18,7 @@ class Ingredients {
       json['id'],
       json['name'] ?? "",
       json['description'] ?? "",
-      json['alcohol'],
+      json['alcohol']??false,
       json['type'] ?? "",
       json['percentage'] ?? -1,
       json['imageUrl'] ?? "",
@@ -27,15 +27,3 @@ class Ingredients {
   }
 }
 
-Future<List<Ingredients>> fetchIngredients(String id) async {
-  List<Ingredients> ingredients = [];
-  var endpointURL = "https://cocktails.solvro.pl/api/v1/cocktails/$id";
-  var url = Uri.parse(endpointURL);
-  var response = await http.get(url);
-
-  if (response.statusCode == 200) {
-    var jsonResponse = json.decode(response.body)["data"]["ingredients"] as List<dynamic>;
-    ingredients = jsonResponse.map((ingredient) => Ingredients.fromMap(ingredient)).toList();
-  }
-  return ingredients;
-}

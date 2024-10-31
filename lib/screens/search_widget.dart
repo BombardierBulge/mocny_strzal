@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -6,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SearchWidget extends StatefulWidget {
   final Function(String, String) setSearch;
 
-  SearchWidget({required this.setSearch});
+  const SearchWidget({super.key, required this.setSearch});
 
   @override
   _SearchWidgetState createState() => _SearchWidgetState();
@@ -24,8 +26,8 @@ class _SearchWidgetState extends State<SearchWidget> {
   void initState() {
     super.initState();
     if(firstStart){
-    clearPreferences();
-    firstStart=false;
+      clearPreferences();
+      firstStart=false;
     }
     fetchCategories();
     loadPreferences();
@@ -34,7 +36,7 @@ class _SearchWidgetState extends State<SearchWidget> {
   Future<void> fetchCategories() async {
     try {
       final response = await http.get(Uri.parse('https://cocktails.solvro.pl/api/v1/cocktails/categories'));
-      if (response.statusCode == 200) {
+      if (response.statusCode == HttpStatus.ok) {
         final List<dynamic> data = jsonDecode(response.body)['data'];
         setState(() {
           categories = ["All"];
@@ -68,13 +70,7 @@ class _SearchWidgetState extends State<SearchWidget> {
     await prefs.setString('selectedCategory', selectedCategory);
     await prefs.setString('selectedAlcoholOption', selectedAlcoholOption);
   }
-  void refreshFiltrs(){
-    setState(() {
-      widget.setSearch(nameFilter, "name");
-      widget.setSearch(selectedCategory, "category");
-      widget.setSearch(selectedAlcoholOption, "alcoholic");
-    });
-  }
+
   @override
   void dispose() {
     searchController.dispose();
@@ -91,7 +87,7 @@ class _SearchWidgetState extends State<SearchWidget> {
           children: [
             TextField(
               controller: searchController,
-              decoration: InputDecoration(labelText: 'Search Cocktails', border: OutlineInputBorder()),
+              decoration: const InputDecoration(labelText: 'Search Cocktails', border: OutlineInputBorder()),
               onChanged: (value) {
                 setState(() {
                   nameFilter = value;
@@ -100,8 +96,8 @@ class _SearchWidgetState extends State<SearchWidget> {
                 widget.setSearch(nameFilter, "name");
               },
             ),
-            SizedBox(height: 16),
-            Text('Categories:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            const Text('Categories:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             DropdownButton<String>(
               value: selectedCategory,
               onChanged: (String? newValue) {
@@ -118,12 +114,12 @@ class _SearchWidgetState extends State<SearchWidget> {
                 );
               }).toList(),
             ),
-            SizedBox(height: 16),
-            Text(
+            const SizedBox(height: 16),
+            const Text(
               'Alcoholic :',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             RadioListTile<String>(
               title: const Text('Both'),
               value: 'Both',
@@ -164,5 +160,30 @@ class _SearchWidgetState extends State<SearchWidget> {
         ),
       ),
     );
+  }
+}
+
+String formatSearch(String querry, String type) {
+  if (type == "name") {
+    if(querry!=''){
+      return '&$type=%$querry%';
+    }
+    else{
+      return '';
+    }
+  } else if (type == "category") {
+    if (querry == "All"|| querry == '') {
+      return "";
+    } else {
+      return '&$type=$querry';
+    }
+  } else if (type == "alcoholic") {
+    if (querry == "Both" || querry == '' ) {
+      return '';
+    } else {
+      return '&$type=$querry';
+    }
+  } else {
+    return 'unknown type';
   }
 }

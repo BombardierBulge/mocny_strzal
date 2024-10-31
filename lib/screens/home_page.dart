@@ -1,20 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'cocktail_detail_page.dart';
 import 'search_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../classes/cocktails.dart';
+import '../models/cocktails.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-String formatSearch(String query, String type) {
-  if (type == "name") return '&${type}=%${query}%';
-  if (type == "category" && query != "All") return '&${type}=${query}';
-  if (type == "alcoholic" && query != "Both") return '&${type}=${query}';
-  return '';
-}
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -36,48 +34,26 @@ class _HomePageState extends State<HomePage> {
     _scrollController.addListener(_scrollListener);
   }
 
-  String formatSearch(String querry, String type) {
-    if (type == "name") {
-      if(querry!=''){
-        return '&${type}=%${querry}%';
-      }
-      else{
-        return '';
-      }
-    } else if (type == "category") {
-      if (querry == "All"|| querry == '') {
-        return "";
-      } else {
-        return '&${type}=${querry}';
-      }
-    } else if (type == "alcoholic") {
-      if (querry == "Both" || querry == '' ) {
-        return '';
-      } else {
-        return '&${type}=${querry}';
-      }
-    } else {
-      return 'unknown type';
-    }
-  }
+
 
 
   Future<void> fetchData() async {
     setState(() => isLoading = true);
+    await loadPreferences();
     urlFilter = formatSearch(nameFilter, "name") + formatSearch(categoryFilter, "category") + formatSearch(alcoholicFilter, "alcoholic");//'${nameFilter!=''?"&"+nameFilter:""}&${categoryFilter!=''?"&"+categoryFilter:""}&${alcoholicFilter!=''?"&"+nameFilter:""}';
-    var endpointURL = "https://cocktails.solvro.pl/api/v1/cocktails?page=${currentPage}${urlFilter}";
+    var endpointURL = "https://cocktails.solvro.pl/api/v1/cocktails?page=$currentPage$urlFilter";
     var url = Uri.parse(endpointURL);
     var response = await http.get(url);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == HttpStatus.ok) {
       var jsonResponse = json.decode(response.body)["data"] as List<dynamic>;
       List<Cocktails> fetchedCocktails = jsonResponse.map((cocktail) => Cocktails.fromMap(cocktail)).toList();
       setState(() {
-        fetchedCocktails.forEach((cocktail) {
+        for (var cocktail in fetchedCocktails) {
           if (!cocktails.any((c) => c.id == cocktail.id)) {
             cocktails.add(cocktail);
           }
-        });
+        }
         isLoading = false;
         currentPage++;
       });
@@ -134,7 +110,7 @@ class _HomePageState extends State<HomePage> {
         endDrawer: Drawer(
           child: SearchWidget(
               setSearch:
-              setSearch), // Przekazanie funkcji setSearch do SearchWidget
+              setSearch,), // Przekazanie funkcji setSearch do SearchWidget
         ),
         body: cocktails.isEmpty && isLoading
             ? const Center(child: CircularProgressIndicator())
