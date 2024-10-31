@@ -50,9 +50,9 @@ class _CocktailDetailPageState extends State<CocktailDetailPage> {
               HeadlineMedium(title: 'Alcoholic: ${widget.cocktail.alcoholic ? "Yes" : "No"}',),
               const SizedBox(height: 4),
               //HeadlineMedium(title: 'Alcoholic: ${widget.cocktail.alcoholic ? "Yes" : "No"}',),
-              HeadlineMedium(title:'Instructions: '),
+              const HeadlineMedium(title:'Instructions: '),
               Text(
-                '${widget.cocktail.instructions}',
+                widget.cocktail.instructions,
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
@@ -142,8 +142,8 @@ final Ingredients ingredient;
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: Column(children: [
-                  TextBoxBold(content: "Description: "),
-                  Text('${ingredient.description}'),
+                  const TextBoxBold(content: "Description: "),
+                  Text(ingredient.description),
               ])
 
               ),
