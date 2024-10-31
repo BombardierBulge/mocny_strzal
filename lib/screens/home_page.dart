@@ -35,11 +35,14 @@ class _HomePageState extends State<HomePage> {
   }
 
 
-
+  @override
+  void dispose() {
+    clearPreferences();
+    super.dispose();
+  }
 
   Future<void> fetchData() async {
     setState(() => isLoading = true);
-    await loadPreferences();
     urlFilter = formatSearch(nameFilter, "name") + formatSearch(categoryFilter, "category") + formatSearch(alcoholicFilter, "alcoholic");//'${nameFilter!=''?"&"+nameFilter:""}&${categoryFilter!=''?"&"+categoryFilter:""}&${alcoholicFilter!=''?"&"+nameFilter:""}';
     var endpointURL = "https://cocktails.solvro.pl/api/v1/cocktails?page=$currentPage$urlFilter";
     var url = Uri.parse(endpointURL);
@@ -66,6 +69,13 @@ class _HomePageState extends State<HomePage> {
     if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !isLoading) {
       fetchData();
     }
+  }
+
+  Future<void> clearPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('urlFilter', '');
+    await prefs.setString('selectedCategory', 'All');
+    await prefs.setString('selectedAlcoholOption', 'Both');
   }
 
   Future<void> loadPreferences() async {

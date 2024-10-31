@@ -31,3 +31,7 @@ Aplikacja oferuje narzędzia filtrujące wyniki koktajli na podstawie:
 1. **Klonuj repozytorium**:
    ```bash
    git clone https://github.com/BombardierBulge/mocny_strzal.git
+
+## Znane błędy
+- Baza danych zawiera pliki o powtórzonych parametrach takich jak np. https://cocktails.solvro.pl/api/v1/ingredients?name=Soda%20water którę mają dwa występowania z innymi wartościami pól ale takimi samymi nazwami co może powodować dziwne wyszukiwania
+- Po restarcie aplikacji dane wprowadzone w pole wyszukiwania zostają ale nie są one wyszukiwane przez program, dopiero po zmianie któregoś z filtrów albo po ponownym włączeniu dane znikają 
